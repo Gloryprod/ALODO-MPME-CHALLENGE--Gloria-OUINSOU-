@@ -20,7 +20,7 @@ class CompanyProfileRequest extends FormRequest
             'annual_revenue' => ['nullable', 'string', 'max:100'],
             'strengths' => ['required', 'string', 'max:1000'],
             'weaknesses' => ['required', 'string', 'max:1000'],
-            'challenges_description' => ['required', 'string', 'max:1000'],
+            'challenges_description' => ['nullable', 'string', 'max:1000'],
         ];
     }
 
@@ -33,7 +33,6 @@ class CompanyProfileRequest extends FormRequest
             'activity_description.required' => 'Veuillez fournir une description de votre activité.',
             'strengths.required' => 'Veuillez citer vos points forts.',
             'weaknesses.required' => 'Veuillez citer vos points faibles.',
-            'challenges_description.required' => 'Veuillez décrire vos principales difficultés.',
         ];
     }
 }

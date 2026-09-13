@@ -1,15 +1,25 @@
 import React from 'react';
 import { Head, useForm, Link } from '@inertiajs/react';
 
-export default function Phase1Form() {
+export default function Phase1Form({ diagnostic }) {
+    // const { data, setData, post, processing, errors } = useForm({
+    //     name: '',
+    //     sector: '',
+    //     activity_description: '',
+    //     annual_revenue: '',
+    //     strengths: '',
+    //     weaknesses: '',
+    //     challenges_description: '',
+    // });
+
     const { data, setData, post, processing, errors } = useForm({
-        name: '',
-        sector: '',
-        activity_description: '',
-        annual_revenue: '',
-        strengths: '',
-        weaknesses: '',
-        challenges_description: '',
+        diagnostic_id: diagnostic?.id || null,
+        name: diagnostic?.company?.name || '',
+        sector: diagnostic?.company?.sector || '',
+        activity_description: diagnostic?.company?.activity_description || '',
+        weaknesses: diagnostic?.company?.weaknesses || '',
+        strengths: diagnostic?.company?.strengths || '',
+        challenges_description: diagnostic?.company?.challenges_description || '',
     });
 
     const handleSubmit = (e) => {
@@ -39,6 +49,17 @@ export default function Phase1Form() {
                 </header>
 
                 <main className="max-w-3xl mx-auto px-6 py-10 w-full flex-1">
+
+                    <div className="mb-6">
+                        <Link 
+                            href="/" 
+                            className="inline-flex items-center space-x-2 text-sm text-gray-500 hover:text-gray-800 transition-colors py-1.5 px-3 rounded-lg hover:bg-gray-100/80 -ml-3"
+                        >
+                            <span>←</span>
+                            <span>Retour à l'accueil</span>
+                        </Link>
+                    </div>
+
                     <div className="mb-8">
                         <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0A0A0A] tracking-tight mb-2">
                             Phase 1 : Profil de l'entreprise
