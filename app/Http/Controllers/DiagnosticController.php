@@ -63,23 +63,33 @@ class DiagnosticController extends Controller
 
         // Si aucune question n'est liée à ce diagnostic, l'IA les génère
         if ($diagnostic->questions()->count() === 0) {
-            $aiData = $this->geminiService->generatePhase2Diagnostic($company);
+            try {
+                
+                $aiData = $this->geminiService->generatePhase2Diagnostic($company);
 
-            if (!$aiData || !isset($aiData['questions'])) {
-                return back()->with('error', 'Impossible de générer les questions pour le moment.');
-            }
-
-            // Enregistrement des questions générées dans la table diagnostic_questions
-            DB::transaction(function () use ($diagnostic, $aiData) {
-                foreach ($aiData['questions'] as $q) {
-                    $diagnostic->questions()->create([
-                        'label' => $q['label'],
-                        'dimension' => $q['dimension'],
-                        'type' => $q['type'] ?? 'multiple_choice',
-                        'options' => $q['options'] ?? [],
+                if (!$aiData || !isset($aiData['questions'])) {
+                    return back()->withErrors([
+                        'ai_error' => 'Une erreur est survenue lors de la génération des questions. Veuillez réessayer dans quelques instants.'
                     ]);
                 }
-            });
+
+                // Enregistrement des questions générées dans la table diagnostic_questions
+                DB::transaction(function () use ($diagnostic, $aiData) {
+                    foreach ($aiData['questions'] as $q) {
+                        $diagnostic->questions()->create([
+                            'label' => $q['label'],
+                            'dimension' => $q['dimension'],
+                            'type' => $q['type'] ?? 'multiple_choice',
+                            'options' => $q['options'] ?? [],
+                        ]);
+                    }
+                });
+            } catch (\Exception $e) {
+                return back()->withErrors([
+                    'ai_error' => 'Une erreur est survenue lors du traitement. Veuillez réessayer dans quelques instants.'
+                ]);
+            }
+            
         }
 
         // Charger les questions créées pour l'affichage dans la vue
@@ -102,35 +112,42 @@ class DiagnosticController extends Controller
             'responses.*.user_response' => 'required|string',
         ]);
 
-        DB::transaction(function () use ($request, $diagnostic) {
-            // 1. Sauvegarder les réponses de l'entreprise
-            foreach ($request->input('responses') as $resp) {
-                DiagnosticQuestion::where('id', $resp['question_id'])
-                    ->where('diagnostic_id', $diagnostic->id)
-                    ->update(['user_response' => $resp['user_response']]);
-            }
+        try {
+            DB::transaction(function () use ($request, $diagnostic) {
+                // 1. Sauvegarder les réponses de l'entreprise
+                foreach ($request->input('responses') as $resp) {
+                    DiagnosticQuestion::where('id', $resp['question_id'])
+                        ->where('diagnostic_id', $diagnostic->id)
+                        ->update(['user_response' => $resp['user_response']]);
+                }
 
-            // 2. Recharger le diagnostic avec les questions et leurs réponses
-            $diagnostic->load(['company', 'questions']);
+                // 2. Recharger le diagnostic avec les questions et leurs réponses
+                $diagnostic->load(['company', 'questions']);
 
-            // 3. Appeler le service IA pour générer le bilan (scores, synthèse, recommandations)
-            $evaluation = $this->geminiService->evaluateDiagnostic($diagnostic);
+                // 3. Appeler le service IA pour générer le bilan (scores, synthèse, recommandations)
+                $evaluation = $this->geminiService->evaluateDiagnostic($diagnostic);
 
-            if (!$evaluation) {
-                return back()->withErrors([
-                    'error' => "Une erreur est survenue lors de l'évaluation par l'IA. Veuillez réessayer."
+                if (!$evaluation) {
+                    return back()->withErrors([
+                        'ai_error' => 'Une erreur est survenue lors du traitement. Veuillez réessayer dans quelques instants.'
+                    ]);
+                }
+
+                // dd($evaluation); // Pour débogage, à retirer en production
+
+                // 4. Mettre à jour les scores et la synthèse dans la table diagnostics
+                $diagnostic->update([
+                    'global_score' => $evaluation['global_score'],
+                    'summary' => $evaluation['summary'],
+                    'dimension_scores' => $evaluation['dimension_scores'],
                 ]);
-            }
+            });
+        } catch (\Exception $e) {
 
-            dd($evaluation); // Pour débogage, à retirer en production
-
-            // 4. Mettre à jour les scores et la synthèse dans la table diagnostics
-            $diagnostic->update([
-                'global_score' => $evaluation['global_score'],
-                'summary' => $evaluation['summary'],
-                'dimension_scores' => $evaluation['dimension_scores'],
+            return back()->withErrors([
+                'ai_error' => 'Une erreur est survenue lors du traitement. Veuillez valider à nouveau votre formulaire.'
             ]);
-        });
+        }
 
         return redirect()->route('diagnostic.report', ['diagnostic' => $diagnostic->id]);
     }

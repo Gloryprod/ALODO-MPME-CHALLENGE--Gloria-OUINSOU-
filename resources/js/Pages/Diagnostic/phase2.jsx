@@ -1,6 +1,7 @@
 import React from 'react';
 import { Head, useForm, Link } from '@inertiajs/react';
 import { CheckCircle, AlertCircle, ArrowRight, Building2, Sparkles, HelpCircle, ArrowLeft } from 'lucide-react';
+import { usePage } from '@inertiajs/react';
 
 export default function Phase2({ diagnostic, questions }) {
     // Initialisation du formulaire Inertia avec la structure attendue par le controller
@@ -10,6 +11,8 @@ export default function Phase2({ diagnostic, questions }) {
             user_response: '',
         })),
     });
+
+    const { error } = usePage().props;
 
     // Mettre à jour la réponse sélectionnée pour une question
     const handleOptionSelect = (questionId, optionText) => {
@@ -38,6 +41,16 @@ export default function Phase2({ diagnostic, questions }) {
             <Head title="Diagnostic ALODO - Phase 2" />
 
             <div className="min-h-screen bg-brand py-10 px-4 sm:px-6 lg:px-8">
+                {/* Bannière de notification en cas de problème de service IA */}
+                {error?.ai_error && (
+                    <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 flex items-start gap-3 text-red-800 animate-fade-in">
+                        <AlertTriangle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                        <div className="space-y-1 text-sm">
+                            <p className="font-semibold text-red-900">Problème avec le service d'analyse</p>
+                            <p className="text-red-700">{error.ai_error}</p>
+                        </div>
+                    </div>
+                )}
                 <header className="bg-white border-b border-gray-100 py-4 px-6 sm:px-12">
                     <div className="max-w-4xl mx-auto flex items-center justify-between">
                         <Link href="/" className="flex items-center space-x-3">

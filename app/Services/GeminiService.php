@@ -31,7 +31,7 @@ class GeminiService
     public function __construct()
     {
         $this->apiKey = config('services.gemini.api_key');
-        $this->model = config('services.gemini.model', 'gemini-1.5-flash');
+        $this->model = config('services.gemini.model', 'gemini-3.6-flash');
         $this->baseUrl = config('services.gemini.base_url', 'https://generativelanguage.googleapis.com/v1beta/models/');
     }
 
@@ -66,7 +66,7 @@ RÉFÉRENTIEL DES 8 DIMENSIONS ET LEURS SOUS-ASPECTS OBLIGATOIRES :
 
 MISSION & CONSIGNES DE SÉLECTION ET GÉNÉRATION :
 1. SÉLECTION DES DIMENSIONS CRITIQUES :
-   - Analyse le profil, le secteur et les "Points faibles" déclarés par l'entreprise.
+   - Analyse le profil, le secteur, les "Points faibles" et les "Difficultés" déclarés par l'entreprise.
    - Identifie les 2 à 3 dimensions ALODO les plus impactées par ces failles.
 
 2. COUVERTURE STRUCTURÉE DES QUESTIONS :
@@ -88,6 +88,7 @@ PROFIL DE L'ENTREPRISE À AUDITER :
 - Secteur d'activité : {$company->sector}
 - Points forts déclarés : {$company->strengths}
 - Points faibles / vulnérabilités déclarées : {$company->weaknesses}
+- Difficultés rencontrées : {$company->challenges_description}
 
 CONSIGNE EXÉCUTION :
 Génère un total de {$questionsCount} questions (réparties sur les 2 à 3 dimensions les plus critiques). Veille à ce que les questions couvrent des angles/sous-aspects DIFFÉRENTS de chaque dimension pour éviter tout doublon de sujet.

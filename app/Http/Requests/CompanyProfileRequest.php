@@ -20,7 +20,7 @@ class CompanyProfileRequest extends FormRequest
             'annual_revenue' => ['nullable', 'string', 'max:100'],
             'strengths' => ['required', 'string', 'max:1000'],
             'weaknesses' => ['required', 'string', 'max:1000'],
-            'challenges_description' => ['nullable', 'string', 'max:1000'],
+            'challenges_description' => ['required', 'string', 'max:1000'],
         ];
     }
 

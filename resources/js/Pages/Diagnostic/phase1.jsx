@@ -1,5 +1,6 @@
 import React from 'react';
 import { Head, useForm, Link } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
 
 export default function Phase1Form({ diagnostic }) {
     // const { data, setData, post, processing, errors } = useForm({
@@ -11,6 +12,8 @@ export default function Phase1Form({ diagnostic }) {
     //     weaknesses: '',
     //     challenges_description: '',
     // });
+
+    const { error } = usePage().props;
 
     const { data, setData, post, processing, errors } = useForm({
         diagnostic_id: diagnostic?.id || null,
@@ -32,6 +35,17 @@ export default function Phase1Form({ diagnostic }) {
             <Head title="Phase 1 : Profil de l'entreprise" />
 
             <div className="min-h-screen bg-[#FEFEFE] text-[#0A0A0A] flex flex-col justify-between">
+                {/* Bannière de notification en cas de problème de service IA */}
+                {error?.ai_error && (
+                    <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 flex items-start gap-3 text-red-800 animate-fade-in">
+                        <AlertTriangle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                        <div className="space-y-1 text-sm">
+                            <p className="font-semibold text-red-900">Problème avec le service d'analyse</p>
+                            <p className="text-red-700">{error.ai_error}</p>
+                        </div>
+                    </div>
+                )}
+
                 <header className="bg-white border-b border-gray-100 py-4 px-6 sm:px-12">
                     <div className="max-w-4xl mx-auto flex items-center justify-between">
                         <Link href="/" className="flex items-center space-x-3">
@@ -112,6 +126,7 @@ export default function Phase1Form({ diagnostic }) {
                                         <option value="Artisanat & BTP">Artisanat & BTP</option>
                                         <option value="Technologies & Numérique">Technologies & Numérique</option>
                                         <option value="Transport & Logistique">Transport & Logistique</option>
+                                        <option value="Textile & Confection">Textile & Confection</option>
                                         <option value="Autre">Autre</option>
                                     </select>
                                     {errors.sector && (
@@ -138,7 +153,7 @@ export default function Phase1Form({ diagnostic }) {
                                 )}
                             </div>
 
-                            <div>
+                            {/* <div>
                                 <label className="block text-xs font-semibold text-gray-700 mb-1">
                                     Chiffre d'affaires annuel estimé (FCFA) 
                                 </label>
@@ -160,7 +175,7 @@ export default function Phase1Form({ diagnostic }) {
                                 {errors.annual_revenue && (
                                     <p className="text-xs text-red-500 mt-1">{errors.annual_revenue}</p>
                                 )}
-                            </div>
+                            </div> */}
                         </div>
 
                         <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">

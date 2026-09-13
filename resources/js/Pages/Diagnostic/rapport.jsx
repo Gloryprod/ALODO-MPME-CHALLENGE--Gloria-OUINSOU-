@@ -84,7 +84,7 @@ export default function Report({ diagnostic }) {
                                 Référentiel ALODO MPME
                             </span>
                             <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight mt-1">
-                                Bilan du Diagnostic Organisationnel
+                                Bilan du Diagnostic de Maturité Organisationnel
                             </h1>
                         </div>
 
