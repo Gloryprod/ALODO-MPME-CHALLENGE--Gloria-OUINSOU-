@@ -20,7 +20,9 @@ IA Engine	Google Gemini API	Génération de questionnaires ciblés et analyse au
 Base de données	MySQL	Stockage relationnel fiable des profils, questions, réponses et bilans générés.
 
 4. Installation — comment lancer le projet ?
+
 Prérequis
+
 •	PHP >= 8.2
 
 •	Composer
@@ -31,28 +33,28 @@ Prérequis
 
 Étapes d'installation
 Bash
-# 1. Cloner le repository
-git clone https://github.com/Gloryprod/ALODO-MPME-CHALLENGE--Gloria-OUINSOU-.git
-cd alodo-mpme-diagnostic
+1. Cloner le repository
+    git clone https://github.com/Gloryprod/ALODO-MPME-CHALLENGE--Gloria-OUINSOU-.git
+    cd alodo-mpme-diagnostic
 
-# 2. Installer les dépendances PHP et JavaScript
-composer install
-npm install
+2. Installer les dépendances PHP et JavaScript
+    composer install
+    npm install
 
-# 3. Configurer l'environnement
-cp .env.example .env
-php artisan key:generate
+3. Configurer l'environnement
+    cp .env.example .env
+    php artisan key:generate
 
-# 4. Configurer les variables dans le .env
-# DB_DATABASE=alodo_db
-# GEMINI_API_KEY=votre_cle_api_gemini
-# GEMINI_MODEL=modèle_gemini_choisi
-# 5. Lancer les migrations de la base de données
-php artisan migrate
-# 6. Lancer le serveur de développement
-npm run dev
-php artisan serve
-L'application sera accessible sur http://localhost:8000.
+4. Configurer les variables dans le .env
+    DB_DATABASE=alodo_db
+    GEMINI_API_KEY=votre_cle_api_gemini
+    GEMINI_MODEL=modèle_gemini_choisi
+5. Lancer les migrations de la base de données
+    php artisan migrate
+6. Lancer le serveur de développement
+    npm run dev
+    php artisan serve
+    L'application sera accessible sur http://localhost:8000.
 
 5. Fonctionnalités — qu’est-ce qui fonctionne ?
 •	Page d'introduction : Présentation de l’objectif du parcours diagnostic ALODO MPME et de la durée et du principe.
